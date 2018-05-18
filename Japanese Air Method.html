@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+	<!-- Added jQuery to the simulator -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+	<!-- Page Title -->
+	<title>Japanese Air Method</title>
+
+	<!-- Makes website responsive to devices. -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+	<style>
+
+	/*colors in the body page*/
+	body{
+		background-color: #000080;
+	}
+
+	/*colors in the title of simulator*/
+	h1, h2{
+		color: white;
+		font-family: Arial, Helvetica, sans-serif;
+	}
+
+	/*color in the first message*/
+	p{
+		color: white;
+		font-family: "Comic Sans MS", cursive, sans-serif;
+	}
+
+	/*centers images for breathing in and out*/
+	img{
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+		width: 50%;
+	}
+
+</style>
+
+</head>
+<body>
+
+	<center>
+
+		<!-- The first three divs are for the messages that pop up after the user enters start. -->
+		<div id="node-id"></div>
+		<div id="node-id1"></div>
+		<div id="lastMessage"></div>
+
+		<!-- Main div that contains the initial messages. -->
+		<div id="myDiv">
+
+			<!-- Simulator Title -->
+			<h1>Japanese Air Method!</h1>
+
+			<p>This simulator will let you know when to breathe in and breathe out for your breathing exercises.</p>
+
+			<!-- A simple line break -->
+			<br>
+
+			<h2>How to do this method:</h2>
+
+			<p>Stand upright and tighten your glute muscle. <br> Put one foot in front of your body, placing most of your weight on your back foot. <br> Breathe in for three seconds, simultaniously raising your hands in the air above your head. <br> As you exhale, use your whole body to push the air out of your lungs, forcing most of the air out in the first part of the exhale. <br> Make sure you tighten up all your body muscle when you push the air out. <br> Your exhale should last seven seconds.</p>
+
+			<br>
+			<br>
+
+			<p>Whenever you are ready, click the start button!</p>
+
+			<br>
+
+			<!-- Turns an image into a button for user to click on. When clicked, main sequence will initiate. -->
+			<input id="start" type="image" src="images/start.png"></input>
+
+		</div>
+
+		<script type="text/javascript">
+
+			//Main function for when user clicks on image
+			document.getElementById("start").onclick = function(){
+
+				//removes initial messages inside of div
+				var elem = document.getElementById("myDiv");
+				elem.remove();
+
+				//creates an image element for breathe in and out images
+				var image = document.createElement("img");
+
+				//initializes variables
+				var t;    
+				var iSwitch = 0;
+				var hardCounter = 0;
+				var seconds = 0;
+
+				//last prompt for user to restart the sequence.
+				function thankYou(){
+					//appends html tags to last div
+					$("#lastMessage").append("<h1>Complete. Thank you.<br><br>Try again?</h1>");
+
+					$("#lastMessage").append("<input id='restart' type='image' src='images/restart.png'></input>");
+
+					//reloads page for everything to start over
+					document.getElementById("restart").onclick = function(){
+						location.reload();
+					}
+				}
+
+				//adds a second to virtual stopwatch, checks conditions and displays breathe in or out when necessary
+				function add() {
+
+					if (hardCounter >= 14){
+						seconds = 0;
+						clearTimeout(t);
+						image.remove();
+						thankYou();
+						return;
+					}
+					else{
+						seconds++;
+						if (iSwitch == 0 && seconds >= 3){
+							seconds = 0;
+							iSwitch = 1;
+							image.src = "images/breatheOut.png";
+							document.body.appendChild(image);
+						}
+
+						if (hardCounter >= 13 && seconds >= 7){
+							seconds = 0;
+							iSwitch = 0;
+							hardCounter = hardCounter + 1;
+						}
+						else if (iSwitch == 1 && seconds >= 7) {
+							seconds = 0;
+							iSwitch = 0;
+							hardCounter = hardCounter + 1;
+							image.src = "images/breatheIn.png";
+							document.body.appendChild(image);
+						}
+					}
+
+					timer();
+				}
+
+				//function to start the recursive stopwatch
+				function timer() {
+					t = setTimeout(add, 1000);
+				}
+
+				//appends html tags to first and second div
+				$("#node-id").append("<h1>Understood. Will start in 5 seconds.</h1>");
+
+				$("#node-id1").append("<h2 id='num'></h2>");
+
+				//number of seconds
+				var number = 5;
+
+				//counts down 5 seconds, then starts the stopwatch function
+				var x = setInterval(function() {
+
+					//writes current second on html
+					document.getElementById("num").innerHTML = number;
+
+					//counts down
+					number = number - 1;
+
+					if (number == -1) {
+						//stops time interval
+						clearInterval(x);
+
+						//removes first two divs and makes room for images
+						var elem = document.getElementById("node-id");
+						elem.remove();
+
+						var elem1 = document.getElementById("node-id1");
+						elem1.remove();
+
+						//first time displays breathe in image
+						image.src = "images/breatheIn.png";
+						document.body.appendChild(image);
+
+						//starts virtual stopwatch function
+						timer();
+
+						return;
+					}
+
+				}, 1000);
+
+				return;
+			}
+
+		</script>
+
+	</center>
+
+</body>
+</html>
